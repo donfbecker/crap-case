@@ -31,6 +31,20 @@ inch_to_mm = 25.4;
 // at 0.125.
 panel_thickness = 0.125;
 
+// Diameter of screw hole in panels in inches.  This should be
+// loose so the screws can easily pass through. I found that
+// 0.17 works well with my printer for #6 sheet metal and
+// machine screws.  You can use screw_test.scad to test
+// this value.
+screw_hole = 0.17;
+
+// Diameter of screw hole in beams in inches.  This should be
+// tight so that the threads are able to grab. I found that
+// 0.14 works well with my printer for #6 sheet metal and 
+// machine screws. You can use screw_test.scad to test
+// this value
+screw_catch = 0.14;
+
 // Do not edit below this line
 
 $fn = $preview ? 6 : 360;
@@ -123,7 +137,7 @@ module power_supply() {
 module screw_hole() {
     // don't scale this to inches, the modules
     // that call it will do that
-    translate([0.25, 0.25, -0.5]) cylinder(r=0.07, h=1);
+    translate([0.25, 0.25, -0.5]) cylinder(r=(screw_hole/2), h=1);
 }
 
 module screw_catch() {
@@ -131,7 +145,7 @@ module screw_catch() {
     // that call it will do that
     difference() {
         cube([0.5, 0.5, 0.5 - panel_thickness]);
-        translate([0.25, 0.25, -0.001]) cylinder(r=0.06, h=0.502);
+        translate([0.25, 0.25, -0.001]) cylinder(r=(screw_catch/2), h=0.502);
     }
 }
 
