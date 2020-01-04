@@ -14,6 +14,9 @@ cnc = true;
 // Set this to true for an exploded view
 explode = false;
 
+// Set this to true to leave a side open
+open = true;
+
 // This model was built using inches as the unit, but is scaled
 // to millimeters to make it easier for people to print.  If you
 // want a nice rounded metric version, just change this value to
@@ -343,12 +346,12 @@ module bevel_top() { // make 1
 module panel_front() { // make 1
     inches() {
         difference() {
-            cube([5, panel_thickness, 2]);
+            cube([5, 2, panel_thickness]);
             
-            translate([0, 0, 0]) rotate([90, 0, 0]) screw_hole();
-            translate([4.5, 0, 0]) rotate([90, 0, 0]) screw_hole();
-            translate([0, 0, 1.5]) rotate([90, 0, 0]) screw_hole();
-            translate([4.5, 0, 1.5]) rotate([90, 0, 0]) screw_hole();
+            translate([0, 0, 0]) screw_hole();
+            translate([4.5, 0, 0]) screw_hole();
+            translate([0, 1.5, 0]) screw_hole();
+            translate([4.5, 1.5, 0]) screw_hole();
         }
     }
 }
@@ -356,48 +359,48 @@ module panel_front() { // make 1
 module panel_front_left() { // make 1
     inches() difference() {
         hull() {
-            cube([panel_thickness, 5.25, 2.25]);
-            translate([0, 3.5 + (0.5 * (1/3)), 2.75]) cube([panel_thickness, 1.75 - (0.5 * (1/3)), 2.25]);
+            cube([2.25, 5.25, panel_thickness]);
+            translate([2.75, 3.5 + (0.5 * (1/3)), 0]) cube([2.25, 1.75 - (0.5 * (1/3)), panel_thickness]);
         }
         
-        translate([0, 0, 0]) rotate([0, -90, 0]) screw_hole();
-        translate([0, 4.75, 0]) rotate([0, -90, 0]) screw_hole();
-        translate([0, 3.5 + (0.5 * (1/3)), 4.5]) rotate([0, -90, 0]) screw_hole();
-        translate([0, 4.75, 4.5]) rotate([0, -90, 0]) screw_hole();
-        translate([0, 0, 1.75]) rotate([0, -90, 0]) screw_hole();
+        translate([0, 0, 0]) screw_hole();
+        translate([0, 4.75, 0]) screw_hole();
+        translate([4.5, 3.5 + (0.5 * (1/3)), ,0]) screw_hole();
+        translate([4.5, 4.75, 0]) screw_hole();
+        translate([1.75, 0, 0]) screw_hole();
     }
 }
 
 module panel_front_right() { // make 1
-    translate([inch(panel_thickness), 0, 0]) mirror([1, 0, 0]) panel_front_left();
+    translate([0, 0, 0]) mirror([1, 0, 0]) panel_front_left();
 }
 
 module panel_cnc_left() { // make 1
     difference() {
         hull() {
             panel_front_left();
-            inches() translate([0, 10, 0]) cube([panel_thickness, 1, 5]);
+            inches() translate([0, 10, 0]) cube([5, 1, panel_thickness]);
         }
         
         inches() {
-            translate([0, 0, 0]) rotate([0, -90, 0]) screw_hole();
-            translate([0, 4.75, 0]) rotate([0, -90, 0]) screw_hole();
-            translate([0, 3.5 + (0.5 * (1/3)), 4.5]) rotate([0, -90, 0]) screw_hole();
+            translate([0, 0, 0]) screw_hole();
+            translate([0, 4.75, 0]) screw_hole();
+            translate([4.5, 3.5 + (0.5 * (1/3)), 0]) screw_hole();
             
-            translate([0, 4.75, 4.5]) rotate([0, -90, 0]) screw_hole();
-            translate([0, 0, 1.75]) rotate([0, -90, 0]) screw_hole();
+            translate([4.5, 4.75, 0]) screw_hole();
+            translate([1.75, 0, 0]) screw_hole();
             
-            translate([0, 5.75, 0]) rotate([0, -90, 0]) screw_hole();
-            translate([0, 5.75, 4.5]) rotate([0, -90, 0]) screw_hole();
+            translate([0, 5.75, 0]) screw_hole();
+            translate([4.5, 5.75, 0]) screw_hole();
             
-            translate([0, 10.5, 0]) rotate([0, -90, 0]) screw_hole();
-            translate([0, 10.5, 4.5]) rotate([0, -90, 0]) screw_hole();
+            translate([0, 10.5, 0]) screw_hole();
+            translate([4.5, 10.5, 0]) screw_hole();
         }
     }
 }
 
 module panel_cnc_right() { // make 1
-    translate([panel_thickness, 0, 0]) mirror([1, 0, 0]) panel_cnc_left();
+    mirror([1, 0, 0]) panel_cnc_left();
 }
 
 module panel_cnc_top() { // make 1
@@ -438,12 +441,12 @@ module panel_cnc_bottom() { // make 1
 
 module panel_back() { // make 1
     inches() difference() {
-        cube([5, panel_thickness, 5]);
+        cube([5, 5, panel_thickness]);
         
-        translate([0, 0, 0]) rotate([90, 0, 0]) screw_hole();
-        translate([4.5, 0, 0]) rotate([90, 0, 0]) screw_hole();
-        translate([0, 0, 4.5]) rotate([90, 0, 0]) screw_hole();
-        translate([4.5, 0, 4.5]) rotate([90, 0, 0]) screw_hole();
+        translate([0, 0, 0]) screw_hole();
+        translate([4.5, 0, 0]) screw_hole();
+        translate([0, 4.5, 0]) screw_hole();
+        translate([4.5, 4.5, 0]) screw_hole();
     }
 }
 
@@ -523,25 +526,25 @@ color([0.1, 0.1, 0.1]) {
 
 color([0.5, 0.5, 0.5]) {
     if(cnc) {
-        inch_translate([0 - e, 0.5 + e, 0.5]) panel_cnc_left();
-        *inch_translate([6 - panel_thickness + (e * 5), 0.5 + e, 0.5]) panel_cnc_right();
+        inch_translate([panel_thickness - e, 0.5 + e, 0.5]) rotate([0, -90, 0]) panel_cnc_left();
+        if(!open) inch_translate([6 - panel_thickness + (e * 5), 0.5 + e, 0.5]) rotate([0, 90, 0]) panel_cnc_right();
         inch_translate([0.5 + (e * 2), 4.5 + e, 6 - panel_thickness + e]) panel_cnc_top();
         inch_translate([0.5 + (e * 2), 0.5 + e, 0.375 + e]) panel_cnc_bottom();
     } else {
-        inch_translate([0 - e, 0.5, 0.5]) panel_front_left();
-        inch_translate([6 - panel_thickness + (e * 5), 0.5, 0.5]) panel_front_right();
         inch_translate([0.5 + (e * 2), 4.5, 6 - panel_thickness + e]) panel_small(); 
+        inch_translate([panel_thickness - e, 0.5, 0.5]) rotate([0, -90, 0]) panel_front_left();
+        if(!open) inch_translate([6 - panel_thickness + (e * 5), 0.5, 0.5]) rotate([0, 90, 0]) panel_front_right();
 
         inch_translate([0.5 + (e * 2), 0.5, 0.5 - panel_thickness]) panel_misc();
         inch_translate([0.5 + (e * 2), 6.25 + (e * 2), 0.5 - panel_thickness]) panel_misc();
         inch_translate([0.5 + (e * 2), 6.25 + (e * 2), 6 - panel_thickness + e]) panel_misc();
     
-        inch_translate([0.125 - e, 6.25 + (e * 2), 0.5]) rotate([0, -90, 0]) panel_misc();
-        inch_translate([6 + (e * 5), 6.25 + (e * 2), 0.5]) rotate([0, -90, 0]) panel_misc();
+        inch_translate([panel_thickness - e, 6.25 + (e * 2), 0.5]) rotate([0, -90, 0]) panel_misc();
+        if(!open) inch_translate([6 + (e * 5), 6.25 + (e * 2), 0.5]) rotate([0, -90, 0]) panel_misc();
    }
 
-   inch_translate([0.5 + (e * 2), 0 - e, 0.5]) panel_front();
-   inch_translate([0.5 + (e * 2), 12 - panel_thickness + (e * 6), 0.5]) panel_back();
+   inch_translate([0.5 + (e * 2), panel_thickness - e, 0.5]) rotate([90, 0, 0]) panel_front();
+   inch_translate([0.5 + (e * 2), 12 + (e * 6), 0.5]) rotate([90, 0, 0]) panel_back();
    
    inch_translate([0, 0, 3]) rotate([36.869897, 0, 0]) inch_translate([0.5 + (e * 2), 0.5, -0.125]) panel_screen();
 }
@@ -556,6 +559,6 @@ color([0.4, 0.4, 0.4]) {
 
 if(!explode) {    
     color([0.3, 0.3, 0.5]) translate([((inch(6) - 115) / 2) + inch(e * 2), inch(1) + (inch(1) - 25) * 5, inch(0.5)]) power_supply();
-    //color([0.0, 0.7, 0.5]) inch_translate([0, 0, 3]) rotate([36.869897, 0, 0]) inch_translate([0.5 + (e * 2), 0.5, -0.125]) translate([(inch(5) - 93) / 2, (inch(4) - 87) / 2, -10]) import("full_graphic_smart_controller.stl");
-    //color([0.0, 0.5, 0.7]) inch_translate([(6 - 4.05) / 2 + (e * 2), 6, 3]) rotate([0, 0, -90]) import("rambo_v1.4.stl");
+    color([0.0, 0.7, 0.5]) inch_translate([0, 0, 3]) rotate([36.869897, 0, 0]) inch_translate([0.5 + (e * 2), 0.5, -0.125]) translate([(inch(5) - 93) / 2, (inch(4) - 87) / 2, -10]) import("full_graphic_smart_controller.stl");
+    color([0.0, 0.5, 0.7]) inch_translate([(6 - 4.05) / 2 + (e * 2), 6, 3]) rotate([0, 0, -90]) import("rambo_v1.4.stl");
 }
