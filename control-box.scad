@@ -1,3 +1,11 @@
+// Hey!  Why didn't you just use FreeCAD or Fusion360?
+// Listen... I may from time to time over complicate things.
+// I do use FreeCAD, but I don't really care for the constraint
+// system, at least not yet.  I may need to learn more about it.
+// As for Fusion360, I am not a fan of vendor lock in.  I want
+// to make sure I can use all my models in the future, and that
+// other people can freely use them as well.
+
 // If you want single panels on the sides, and
 // have a cnc to cut them, or a large 3D printer,
 // set this to true.  Otherwise, set it to false;
