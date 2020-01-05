@@ -41,9 +41,15 @@ screw_hole = 0.17;
 // Diameter of screw hole in beams in inches.  This should be
 // tight so that the threads are able to grab. I found that
 // 0.14 works well with my printer for #6 sheet metal and 
-// machine screws. You can use screw_test.scad to test
+// machine screws. You can use screw-test.scad to test
 // this value
 screw_catch = 0.14;
+
+// Diameter of alignment pegs.  The hole will always be 0.25
+// inches, but the peg may need to be undersized to account
+// for how your printer prints.  Use peg-test.scad to test
+// this value.
+alignment_peg = 0.24;
 
 // Do not edit below this line
 
@@ -162,8 +168,8 @@ module beam(length, screws=true, bottom=false) {
             translate([0.5, length - 0.5, bottom ? 0 : panel_thickness]) screw_catch();
         }
         
-        #translate([0.25, 0, 0.25]) rotate([90, 22.5, 0]) cylinder(r=0.125, h=0.125, $fn=8);
-        #translate([0.25, length, 0.25]) rotate([-90, 22.5, 0]) cylinder(r=0.125, h=0.125, $fn=8);
+        #translate([0.25, 0, 0.25]) rotate([90, 22.5, 0]) cylinder(r=alignment_peg / 2, h=0.125, $fn=8);
+        #translate([0.25, length, 0.25]) rotate([-90, 22.5, 0]) cylinder(r=alignment_peg / 2, h=0.125, $fn=8);
     }
 }
 
@@ -291,7 +297,7 @@ module frame_left() { // make 1
                 translate([0, 0, -0.5]) cube([0.5, 5, 0.5]);
             }
         
-            #translate([0.25, 5.75, 5.75]) rotate([-90, 22.5, 0]) cylinder(r=0.125, h=0.125, $fn=8);
+            #translate([0.25, 5.75, 5.75]) rotate([-90, 22.5, 0]) cylinder(r=alignment_peg / 2, h=0.125, $fn=8);
                        
             // Screws for front panel
             translate([0.5, 0.5, 0.5]) rotate([90, 0, 0]) screw_catch();
@@ -336,8 +342,8 @@ module bevel_bottom() { // make 1
             translate([4.25, 0.25, 0.25]) rotate([-90, 22.5, 0]) cylinder(r=0.125, h=(7/16), $fn=8);
         }
     
-        #translate([0, 0.25, 0.25]) rotate([0, -90, 0]) rotate([0, 0, 22.5]) cylinder(r=0.125, h=(3/16), $fn=8);
-        #translate([5, 0.25, 0.25]) rotate([0, 90, 0]) rotate([0, 0, 22.5]) cylinder(r=0.125, h=(3/16), $fn=8);
+        #translate([0, 0.25, 0.25]) rotate([0, -90, 0]) rotate([0, 0, 22.5]) cylinder(r=alignment_peg / 2, h=(3/16), $fn=8);
+        #translate([5, 0.25, 0.25]) rotate([0, 90, 0]) rotate([0, 0, 22.5]) cylinder(r=alignment_peg / 2, h=(3/16), $fn=8);
     }
 }
 
@@ -351,8 +357,8 @@ module bevel_top() { // make 1
                 translate([-0.001, -0.001, 0.5]) rotate([-36.869897, 0, 0]) translate([0, 0, 0.5]) cube([5.002, 1.002, 1]);
             }
         
-            #translate([0, 0.25, 0.25]) rotate([0, -90, 0]) rotate([0, 0, 22.5]) cylinder(r=0.125, h=(3/16), $fn=8);
-            #translate([5, 0.25, 0.25]) rotate([0, 90, 0]) rotate([0, 0, 22.5]) cylinder(r=0.125, h=(3/16), $fn=8);
+            #translate([0, 0.25, 0.25]) rotate([0, -90, 0]) rotate([0, 0, 22.5]) cylinder(r=alignment_peg / 2, h=(3/16), $fn=8);
+            #translate([5, 0.25, 0.25]) rotate([0, 90, 0]) rotate([0, 0, 22.5]) cylinder(r=alignment_peg / 2, h=(3/16), $fn=8);
         }
     }
 }
