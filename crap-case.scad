@@ -155,16 +155,19 @@ module screw_catch() {
     }
 }
 
-module peg() {
-    #rotate([0, 0, 22.5]) {
-        cylinder(r=alignment_peg / 2, h=0.09375, $fn=8);
-        translate([0, 0, 0.09375]) cylinder(r1=(alignment_peg / 2), r2=((alignment_peg * 0.75) / 2), h=0.03125, $fn=8);
+module peg(x=0, y=0, z=0, taper=true) {
+    major = (alignment_peg / 2);
+    minor = taper ? ((alignment_peg * 0.75) / 2) : major;
+    #translate([0.25 * (x + 1), 0.25 * (y + 1), 0.25 * (z + 1)]) rotate([90 * y, 90 * x, 0]) rotate([0, 0, 22.5]) {
+        translate([0, 0, -(7/32)]) mirror([0, 0, 1]) cylinder(r1=major, r2=minor, h=(1/32), center=false, $fn=8);
+        cylinder(r=major, h=(7/16), center=true, $fn=8);
+        translate([0, 0, (7/32)]) cylinder(r1=major, r2=minor, h=(1/32), center=false, $fn=8);
    
     }
 }
 
-module peg_hole(length=0.4375) {
-    #rotate([0, 0, 22.5]) cylinder(r=0.125, h=length, $fn=8);
+module peg_hole(x=0, y=0, z=0) {
+    peg(x, y, z, false);
 }
 
 module beam(length, screws=true, bottom=false) {
@@ -175,13 +178,12 @@ module beam(length, screws=true, bottom=false) {
             translate([0.5, 0, 0.5]) rotate([0, -90, 0]) screw_catch();
             translate([0.5, length - 0.5, 0.5]) rotate([0, -90, 0]) screw_catch();
             
-            
             translate([0.5, 0, bottom ? 0 : panel_thickness]) screw_catch();
             translate([0.5, length - 0.5, bottom ? 0 : panel_thickness]) screw_catch();
         }
         
-        translate([0.25, 0, 0.25]) rotate([90, 0, 0]) peg();
-        translate([0.25, length, 0.25]) rotate([-90, 0, 0]) peg();
+        peg(y=-1);
+        translate([0, length - 0.5, 0]) peg(y=1);
     }
 }
 
@@ -264,14 +266,17 @@ module frame_back() { // make 1
                 translate([4.5, 0, 2.5]) cube([1, 0.5 - panel_thickness, 0.5]);
             }
         
-            translate([0.25, 0.25, 0.25]) rotate([90, 0, 0]) peg_hole();
-            translate([5.75, 0.25, 0.25]) rotate([90, 0, 0]) peg_hole();
+            translate([0, 0, 0]) peg_hole(y=-1);
+            translate([5.5, 0, 0]) peg_hole(y=-1);
             
-            translate([1.25, 0.625, 2.75]) rotate([90, 0, 0]) peg_hole(0.75);
-            translate([4.75, 0.625, 2.75]) rotate([90, 0, 0]) peg_hole(0.75);
+            // Make sure these go through
+            translate([1, 0, 2.5]) peg_hole(y=-1);
+            translate([1, 0, 2.5]) peg_hole(y=1);
+            translate([4.5, 0, 2.5]) peg_hole(y=-1);
+            translate([4.5, 0, 2.5]) peg_hole(y=1);
             
-            translate([0.25, 0.25, 5.75]) rotate([90, 0, 0]) peg_hole();
-            translate([5.75, 0.25, 5.75]) rotate([90, 0, 0]) peg_hole();   
+            translate([0, 0, 5.5]) peg_hole(y=-1);
+            translate([5.5, 0, 5.5]) peg_hole(y=-1);
         }
         
         translate([0.5, 0, 1]) rotate([-90, 0, 0]) screw_catch();
@@ -302,29 +307,30 @@ module frame_middle() { // make 1
             translate([6 - panel_thickness, -0.125, 0.5]) cube([panel_thickness * 2, 0.75, 5]);
         }
         
-        translate([0.25, 0.625, 0.25]) rotate([90, 0, 0]) peg_hole(0.75);
-        translate([5.75, 0.625, 0.25]) rotate([90, 0, 0]) peg_hole(0.75);
+        for(i = [-1,1]) {
+            peg_hole(y=i);
+            translate([5.5, 0, 0]) peg_hole(y=i);
         
-        translate([1.25, 0.625, 2.75]) rotate([90, 0, 0]) peg_hole(0.75);
-        translate([4.75, 0.625, 2.75]) rotate([90, 0, 0]) peg_hole(0.75);
+            translate([1, 0, 2.5]) peg_hole(y=i);
+            translate([4.5, 0, 2.5]) peg_hole(y=i);
         
-        translate([0.25, 0.625, 5.75]) rotate([90, 0, 0]) peg_hole(0.75);
-        translate([5.75, 0.625, 5.75]) rotate([90, 0, 0]) peg_hole(0.75);
+            translate([0, 0, 5.5]) peg_hole(y=i);
+            translate([5.5, 0, 5.5]) peg_hole(y=i);
+        }
     }
 }
 
 module frame_front_bottom_left() { // make 1
     inches() difference() {
         union() {
-            cube([0.5, 0.5, 3]);
-        
+            
+            cube([0.5, 0.5, 3]);       
             translate([0, 0, 3]) rotate([36.869897, 0, 0]) difference() {
-                translate([0, 0, -0.5]) cube([0.5, 0.5, 0.5]);
-                translate([0.25, 0.25, -0.25]) rotate([-90, 0, 0]) peg_hole();
+                translate([0, 0, -0.5]) {
+                    cube([0.5, 0.5, 0.5]);
+                }
             }
-        
-            #translate([0.25, 5.75, 5.75]) rotate([-90, 0, 0]) peg();
-                       
+            
             // Screws for front panel
             translate([0.5, 0.5, 0.5]) rotate([90, 0, 0]) screw_catch();
             translate([0.5, 0.5, 2]) rotate([90, 0, 0]) screw_catch();
@@ -333,9 +339,16 @@ module frame_front_bottom_left() { // make 1
             translate([0.5, 0.5, 2.25]) rotate([0, -90, 0]) screw_catch();
         }
         
-        translate([0.25, 0.25, 0.25]) rotate([0, 90, 0]) peg_hole();
-        translate([0.25, 0.25, 2.75]) rotate([0, 90, 0]) peg_hole();
-        translate([0.25, 0.25, 0.25]) rotate([-90, 0, 0]) peg_hole();
+        // Peg for slope
+        translate([0, 0, 3]) rotate([36.869897, 0, 0]) difference() {
+            translate([0, 0, -0.5]) {
+                peg_hole(y=1);
+            }
+        }
+        
+        peg_hole(x=1);
+        peg_hole(y=1);
+        translate([0, 0, 2.5]) peg_hole(x=1);
     }
 }
 
@@ -350,10 +363,10 @@ module frame_front_top_left() { // make 1
         
             translate([0, 0, 3]) rotate([36.869897, 0, 0]) difference() {
                 translate([0, 4.5, -0.5]) cube([0.5, 0.5, 0.5]);
-                #translate([0.25, 4.375, -0.25]) rotate([-90, 0, 0]) peg_hole();
+                #translate([0, 4.5, -0.5]) peg_hole(y=-1);
             }
         
-            #translate([0.25, 5.75, 5.75]) rotate([-90, 0, 0]) peg();
+            #translate([0, 5.25, 5.5]) peg(y=1);
                                  
             // Screws for small panel on top
             translate([0.5, 4.5, 5.5]) screw_catch();
@@ -364,7 +377,7 @@ module frame_front_top_left() { // make 1
             translate([0.5, 5.25, 5]) rotate([0, -90, 0]) screw_catch();
         }
         
-        translate([0.25, 4.25, 5.75]) rotate([0, 90, 0]) peg_hole();
+        translate([0, 4, 5.5]) peg_hole(x=1);
     }
 }
 
@@ -380,12 +393,12 @@ module bevel_bottom() { // make 1
             translate([-0.001, 0, 0.5]) rotate([36.869897, 0, 0]) cube([5.002, 1, 1]);
             translate([-0.001, 0, 0.5]) rotate([36.869897, 0, 0]) translate([0, 0.5, -0.5]) cube([5.002, 1, 1]);
            
-            translate([0.75, 0.25, 0.25]) rotate([-90, 0, 0]) peg_hole();
-            translate([4.25, 0.25, 0.25]) rotate([-90, 0, 0]) peg_hole();
+            translate([0.5, 0, 0]) peg_hole(y=1);
+            translate([4, 0, 0]) peg_hole(y=1);
         }
     
-        translate([0, 0.25, 0.25]) rotate([0, -90, 0]) peg();
-        translate([5, 0.25, 0.25]) rotate([0, 90, 0]) peg();
+        peg(x=-1);
+        translate([4.5, 0, 0]) peg(x=1);
     }
 }
 
@@ -399,8 +412,8 @@ module bevel_top() { // make 1
                 translate([-0.001, -0.001, 0.5]) rotate([-36.869897, 0, 0]) translate([0, 0, 0.5]) cube([5.002, 1.002, 1]);
             }
         
-            translate([0, 0.25, 0.25]) rotate([0, -90, 0]) peg();
-            translate([5, 0.25, 0.25]) rotate([0, 90, 0]) peg();
+            peg(x=-1);
+            translate([4.5, 0, 0]) peg(x=1);
         }
     }
 }
