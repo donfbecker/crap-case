@@ -325,41 +325,10 @@ module frame_middle() { // make 1
 }
 
 module frame_left() { // make 1
-    inches() difference() {
-        union() {
-            cube([0.5, 0.5, 3]);
-            translate([0, 4, 5.5]) cube([0.5, 1.75, 0.5]);
-
-            translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) {
-                translate([0, 0, -0.5]) cube([0.5, 5, 0.5]);
-            }
-
-            translate([0, 5.25, 5.5]) peg(y=1);
-
-            // Screws for front panel
-            translate([0.5, 0.5, 0.5]) rotate([90, 0, 0]) screw_catch();
-            translate([0.5, 0.5, 2]) rotate([90, 0, 0]) screw_catch();
-
-            // Screws for small panel on top
-            translate([0.5, 4.5, 5.5]) screw_catch();
-            translate([0.5, 5.25, 5.5]) screw_catch();
-
-            // Screws for side panel
-            translate([0.5, 0.5, 2.25]) rotate([0, -90, 0]) screw_catch();
-            translate([0.5, 4 + (0.5 * (1/3)), 5]) rotate([0, -90, 0]) screw_catch();
-            translate([0.5, 5.25, 5]) rotate([0, -90, 0]) screw_catch();
-
-            // Screws for screen panel
-            translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) {
-                translate([0.5, 0.5, -0.5]) screw_catch();
-                translate([0.5, 4, -0.5]) screw_catch();
-            }
-        }
-
-        peg_hole(x=1);
-        peg_hole(y=1);
-        translate([0, 4, 5.5]) peg_hole(x=1);
-        translate([0, 0, 2.5]) peg_hole(x=1);
+    union() {
+        frame_front_bottom_left(false);
+        inch_translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) inch_translate([0, 0.5, -0.5]) beam_slope_left();
+        inch_translate([0, 4, 5.5]) frame_front_top_left(false);
     }
 }
 
@@ -367,7 +336,7 @@ module frame_right() { // make 1
     translate([inch(0.5), 0, 0]) mirror([1, 0, 0]) frame_left();
 }
 
-module frame_front_bottom_left() { // make 1
+module frame_front_bottom_left(slope_peg=true) { // make 1
     inches() difference() {
         union() {
             cube([0.5, 0.5, 3]);
@@ -386,7 +355,7 @@ module frame_front_bottom_left() { // make 1
         }
 
         // Peg for slope
-        translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) difference() {
+        if(slope_peg) translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) difference() {
             translate([0, 0, -0.5]) {
                 peg_hole(y=1);
             }
@@ -402,13 +371,13 @@ module frame_front_bottom_right() { // make 1
     translate([inch(0.5), 0, 0]) mirror([1, 0, 0]) frame_front_bottom_left();
 }
 
-module frame_front_top_left() { // make 1
+module frame_front_top_left(slope_peg=true) { // make 1
     inches() difference() {
         union() {
             cube([0.5, 1.75, 0.5]);
             translate([0, 0, 0.5]) rotate([-atan(4/3), 0, 0]) translate([0, 0, -0.5]) difference() {
                 cube([0.5, 0.5, 0.5]);
-                peg_hole(z=-1);
+                if(slope_peg) peg_hole(z=-1);
             }
 
             translate([0, 1.25, 0]) peg(y=1);
