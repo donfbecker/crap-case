@@ -6,30 +6,29 @@
 // to make sure I can use all my models in the future, and that
 // other people can freely use them as well.
 
+// The comments above each variable below will have a verbose
+// comment explaining it's function, and also a single line 
+// comment for Customizer to use as a label.
+
+/* [Model] */
+
 // This model was built using inches as the unit, but is scaled
 // to millimeters to make it easier for people to print.  If you
 // want a nice rounded metric version, just change this value to
 // 25, instead of 25.4.  You can set it to a larger number if you
 // want a bigger case.  The 30 amp power supply will not fit if
 // you make it less than 25.
+//
+// Number of mm in an inch.
 inch_to_mm = 25.4;
-
-// If you want single panels on the sides, and
-// have a cnc to cut them, or a large 3D printer,
-// set this to true.  Otherwise, set it to false;
-large_panels = true;
-
-// Set this to the thickness of the material you plan
-// to use for panels in inches.  I wouldn't use anything
-// over 0.25 inches.  If you are printing them, leave it
-// at 0.125.
-panel_thickness = 0.125;
 
 // Diameter of screw hole in panels in inches.  This should be
 // loose so the screws can easily pass through. I found that
 // 0.17 works well with my printer for #6 sheet metal and
 // machine screws.  You can use screw_test.scad to test
 // this value.
+//
+// Diameter of screw holes in panels.
 screw_hole = 0.17;
 
 // Diameter of screw hole in beams in inches.  This should be
@@ -37,34 +36,58 @@ screw_hole = 0.17;
 // 0.14 works well with my printer for #6 sheet metal and
 // machine screws. You can use screw-test.scad to test
 // this value
+//
+// Diameter of screw holes in catches.
 screw_catch = 0.14;
 
 // Diameter of alignment pegs.  The hole will always be 0.25
 // inches, but the peg may need to be undersized to account
 // for how your printer prints.  Use peg-test.scad to test
 // this value.
+//
+// Diameter of alignment pegs.
 alignment_peg = 0.235;
 
+// Set this to the thickness of the material you plan
+// to use for panels in inches.  I wouldn't use anything
+// over 0.25 inches.  If you are printing them, leave it
+// at 0.125.
+//
+// Thickness of panels
+panel_thickness = 0.125;
+
+// If you want single panels on the sides, and
+// have a cnc to cut them, or a large 3D printer,
+// set this to true.  Otherwise, set it to false;
+//
+// Use large panels?
+large_panels = true;
+
+/* [Preview] */
 // -----------------------------------------------------------
 // Settings below this line only affect the preview you
 // see in OpenSCAD, and not the STL files that are generated
 // by build.sh
 // -----------------------------------------------------------
 
-// The biggest parts of this case should fit on a
-// 6in by 6in print bed.  If you want to have it broken
-// up into even smaller parts, set small_parts to true.
-small_parts = true;
-
 // Set this to true for an exploded view
 explode = false;
 
-// Set this to hide panels so you can see
-// the frame.
+// Build.sh will generate STL files for both big
+// and small parts, but you can choose which version
+// to display in an exploded view by setting this to
+// true for small parts, and false for big parts.
+// 
+// Display small parts
+small_parts = true;
+
+// Hide panels.
 hide_panels = false;
 
 // If hide_panels is false, you can set this
 // to true to leave one side open.
+//
+// Leave one open side.
 open_side = true;
 
 // -----------------------------------------------------------
