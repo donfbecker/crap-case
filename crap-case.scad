@@ -53,13 +53,18 @@ alignment_peg = 0.235;
 
 // The biggest parts of this case should fit on a
 // 6in by 6in print bed.  If you want to have it broken
-// up into even smaller parts, set small_parts to true;
+// up into even smaller parts, set small_parts to true.
 small_parts = true;
 
 // Set this to true for an exploded view
 explode = false;
 
-// Set this to true to leave a side open
+// Set this to hide panels so you can see
+// the frame.
+hide_panels = false;
+
+// If hide_panels is false, you can set this
+// to true to leave one side open.
 open_side = true;
 
 // -----------------------------------------------------------
@@ -631,7 +636,7 @@ color([0.1, 0.1, 0.1]) {
     inch_translate([4.5 + (e * 3), 6.25 + (e * 3), 2.5]) board_beam();
 }
 
-color([0.5, 0.5, 0.5]) {
+if(!hide_panels) color([0.5, 0.5, 0.5]) {
     if(large_panels) {
         inch_translate([panel_thickness - e, 0.5 + e, 0.5]) rotate([0, -90, 0]) panel_large_left();
         if(!open_side) inch_translate([6 - panel_thickness + (e * 5), 0.5 + e, 0.5]) rotate([0, 90, 0]) panel_large_right();
