@@ -654,7 +654,7 @@ color([0.1, 0.1, 0.1]) {
     inch_translate([4.5 + (e * 3), 6.25 + (e * 3), 2.5]) board_beam();
 }
 
-*color([0.5, 0.5, 0.5]) {
+color([0.5, 0.5, 0.5]) {
     if(cnc) {
         inch_translate([panel_thickness - e, 0.5 + e, 0.5]) rotate([0, -90, 0]) panel_cnc_left();
         if(!open) inch_translate([6 - panel_thickness + (e * 5), 0.5 + e, 0.5]) rotate([0, 90, 0]) panel_cnc_right();
