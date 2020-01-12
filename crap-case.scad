@@ -6,22 +6,6 @@
 // to make sure I can use all my models in the future, and that
 // other people can freely use them as well.
 
-// If you want single panels on the sides, and
-// have a cnc to cut them, or a large 3D printer,
-// set this to true.  Otherwise, set it to false;
-cnc = true;
-
-// The biggest parts of this case should fit on a
-// 6in by 6in print bed.  If you want to have it broken
-// up into smaller parts, set small_parts to true;
-small_parts = true;
-
-// Set this to true for an exploded view
-explode = false;
-
-// Set this to true to leave a side open
-open = true;
-
 // This model was built using inches as the unit, but is scaled
 // to millimeters to make it easier for people to print.  If you
 // want a nice rounded metric version, just change this value to
@@ -29,6 +13,11 @@ open = true;
 // want a bigger case.  The 30 amp power supply will not fit if
 // you make it less than 25.
 inch_to_mm = 25.4;
+
+// If you want single panels on the sides, and
+// have a cnc to cut them, or a large 3D printer,
+// set this to true.  Otherwise, set it to false;
+large_panels = true;
 
 // Set this to the thickness of the material you plan
 // to use for panels in inches.  I wouldn't use anything
@@ -56,7 +45,26 @@ screw_catch = 0.14;
 // this value.
 alignment_peg = 0.235;
 
+// -----------------------------------------------------------
+// Settings below this line only affect the preview you
+// see in OpenSCAD, and not the STL files that are generated
+// by build.sh
+// -----------------------------------------------------------
+
+// The biggest parts of this case should fit on a
+// 6in by 6in print bed.  If you want to have it broken
+// up into even smaller parts, set small_parts to true;
+small_parts = true;
+
+// Set this to true for an exploded view
+explode = false;
+
+// Set this to true to leave a side open
+open_side = true;
+
+// -----------------------------------------------------------
 // Do not edit below this line
+// -----------------------------------------------------------
 
 $fn = $preview ? 6 : 360;
 
@@ -302,8 +310,8 @@ module frame_middle() { // make 1
             translate([4.5, 0, 2.5]) cube([1, 0.5, 0.5]);
         }
 
-        if(cnc) {
-            // If CNC, cut notches for panels
+        if(large_panels) {
+            // If large_panels, cut notches for panels
             translate([0.5, -0.125, 6 - panel_thickness]) cube([5, 0.75, panel_thickness * 2]);
             translate([0.5, -0.125, 0.5 - panel_thickness]) cube([5, 0.75, panel_thickness * 2]);
 
@@ -464,7 +472,7 @@ module panel_front_right() { // make 1
     translate([0, 0, 0]) mirror([1, 0, 0]) panel_front_left();
 }
 
-module panel_cnc_left() { // make 1
+module panel_large_left() { // make 1
     difference() {
         hull() {
             panel_front_left();
@@ -488,11 +496,11 @@ module panel_cnc_left() { // make 1
     }
 }
 
-module panel_cnc_right() { // make 1
-    mirror([1, 0, 0]) panel_cnc_left();
+module panel_large_right() { // make 1
+    mirror([1, 0, 0]) panel_large_left();
 }
 
-module panel_cnc_top() { // make 1
+module panel_large_top() { // make 1
     inches() difference() {
         cube([5, 7, panel_thickness]);
 
@@ -510,7 +518,7 @@ module panel_cnc_top() { // make 1
     }
 }
 
-module panel_cnc_bottom() { // make 1
+module panel_large_bottom() { // make 1
     inches() difference() {
         cube([5, 11, panel_thickness]);
 
@@ -624,22 +632,22 @@ color([0.1, 0.1, 0.1]) {
 }
 
 color([0.5, 0.5, 0.5]) {
-    if(cnc) {
-        inch_translate([panel_thickness - e, 0.5 + e, 0.5]) rotate([0, -90, 0]) panel_cnc_left();
-        if(!open) inch_translate([6 - panel_thickness + (e * 5), 0.5 + e, 0.5]) rotate([0, 90, 0]) panel_cnc_right();
-        inch_translate([0.5 + (e * 2), 4.5 + e, 6 - panel_thickness + e]) panel_cnc_top();
-        inch_translate([0.5 + (e * 2), 0.5 + e, 0.375 + e]) panel_cnc_bottom();
+    if(large_panels) {
+        inch_translate([panel_thickness - e, 0.5 + e, 0.5]) rotate([0, -90, 0]) panel_large_left();
+        if(!open_side) inch_translate([6 - panel_thickness + (e * 5), 0.5 + e, 0.5]) rotate([0, 90, 0]) panel_large_right();
+        inch_translate([0.5 + (e * 2), 4.5 + e, 6 - panel_thickness + e]) panel_large_top();
+        inch_translate([0.5 + (e * 2), 0.5 + e, 0.375 + e]) panel_large_bottom();
     } else {
         inch_translate([0.5 + (e * 2), 4.5, 6 - panel_thickness + e]) panel_small();
         inch_translate([panel_thickness - e, 0.5, 0.5]) rotate([0, -90, 0]) panel_front_left();
-        if(!open) inch_translate([6 - panel_thickness + (e * 5), 0.5, 0.5]) rotate([0, 90, 0]) panel_front_right();
+        if(!open_side) inch_translate([6 - panel_thickness + (e * 5), 0.5, 0.5]) rotate([0, 90, 0]) panel_front_right();
 
         inch_translate([0.5 + (e * 2), 0.5, 0.5 - panel_thickness]) panel_misc();
         inch_translate([0.5 + (e * 2), 6.25 + (e * 2), 0.5 - panel_thickness]) panel_misc();
         inch_translate([0.5 + (e * 2), 6.25 + (e * 2), 6 - panel_thickness + e]) panel_misc();
 
         inch_translate([panel_thickness - e, 6.25 + (e * 2), 0.5]) rotate([0, -90, 0]) panel_misc();
-        if(!open) inch_translate([6 + (e * 5), 6.25 + (e * 2), 0.5]) rotate([0, -90, 0]) panel_misc();
+        if(!open_side) inch_translate([6 + (e * 5), 6.25 + (e * 2), 0.5]) rotate([0, -90, 0]) panel_misc();
    }
 
    inch_translate([0.5 + (e * 2), panel_thickness - e, 0.5]) rotate([90, 0, 0]) panel_front();
