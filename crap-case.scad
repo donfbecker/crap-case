@@ -46,7 +46,7 @@ screw_catch = 0.14;
 // this value.
 //
 // Diameter of alignment pegs.
-alignment_peg = 0.235;
+alignment_peg = 0.24;
 
 // Set this to the thickness of the material you plan
 // to use for panels in inches.  I wouldn't use anything
@@ -77,7 +77,7 @@ explode = false;
 // and small parts, but you can choose which version
 // to display in an exploded view by setting this to
 // true for small parts, and false for big parts.
-// 
+//
 // Display small parts
 small_parts = true;
 
@@ -94,7 +94,7 @@ open_side = true;
 // Do not edit below this line
 // -----------------------------------------------------------
 
-$fn = $preview ? 6 : 360;
+$fn = $preview ? 8 : 360;
 
 e = explode ? 0.5 : 0;
 
@@ -196,39 +196,52 @@ module screw_catch() {
     }
 }
 
-module peg(x=0, y=0, z=0, taper=true) {
+module peg(x=0, y=0, z=0, taper=true, faces=8) {
     major = (alignment_peg / 2);
-    minor = taper ? ((alignment_peg * 0.75) / 2) : major;
-    #translate([0.25 * (x + 1), 0.25 * (y + 1), 0.25 * (z + 1)]) rotate([90 * y, 90 * x, 0]) rotate([0, 0, 22.5]) {
-        translate([0, 0, -(7/32)]) mirror([0, 0, 1]) cylinder(r1=major, r2=minor, h=(1/32), center=false, $fn=8);
-        cylinder(r=major, h=(7/16), center=true, $fn=8);
-        translate([0, 0, (7/32)]) cylinder(r1=major, r2=minor, h=(1/32), center=false, $fn=8);
+    minor = taper ? ((alignment_peg - (1/8)) / 2) : major;
+    #translate([0.25 + ((3/16) * x), 0.25 + ((3/16) * y), 0.25 + ((3/16) * z)]) rotate([90 * y, 90 * x, 0]) rotate([0, 0, 22.5]) {
+        translate([0, 0, -(3/16)]) mirror([0, 0, 1]) cylinder(r1=major, r2=minor, h=(1/16), center=false, $fn=faces);
+        cylinder(r=major, h=(3/8), center=true, $fn=faces);
+        translate([0, 0, (3/16)]) cylinder(r1=major, r2=minor, h=(1/16), center=false, $fn=faces);
     }
 }
 
 module peg_hole(x=0, y=0, z=0) {
-    peg(x, y, z, false);
+    peg(x, y, z, false, $fn);
 }
 
-module beam(length, screws=true, bottom=false) {
-    inches() union() {
-        cube([0.5, length, 0.5]);
+module beam(length, screws=true, bottom=false, p1=1, p2=1) {
+    inches() difference() {
+        union() {
+            cube([0.5, length, 0.5]);
 
-        if(screws) {
-            translate([0.5, 0, 0.5]) rotate([0, -90, 0]) screw_catch();
-            translate([0.5, length - 0.5, 0.5]) rotate([0, -90, 0]) screw_catch();
+            if(screws) {
+                translate([0.5, 0, 0.5]) rotate([0, -90, 0]) screw_catch();
+                translate([0.5, length - 0.5, 0.5]) rotate([0, -90, 0]) screw_catch();
 
-            translate([0.5, 0, bottom ? 0 : panel_thickness]) screw_catch();
-            translate([0.5, length - 0.5, bottom ? 0 : panel_thickness]) screw_catch();
+                translate([0.5, 0, bottom ? 0 : panel_thickness]) screw_catch();
+                translate([0.5, length - 0.5, bottom ? 0 : panel_thickness]) screw_catch();
+            }
+
+            if(p1 == 1) peg(y=-1);
+            if(p2 == 1) translate([0, length - 0.5, 0]) peg(y=1);
         }
 
-        peg(y=-1);
-        translate([0, length - 0.5, 0]) peg(y=1);
+        if(p1 == -1) peg_hole(y=-1);
+        if(p2 == -1) translate([0, length - 0.5, 0]) peg_hole(y=1);
     }
 }
 
-module beam_bottom() { // make 4
+module beam_bottom_back() { // make 2
     beam(5.25, true, true);
+}
+
+module beam_bottom_front_left() { // make 1
+    beam(5.25, true, true, -1, 1);
+}
+
+module beam_bottom_front_right() { // make 1
+    translate([inch(0.5), 0, 0]) mirror([1, 0, 0]) beam(5.25, true, true, -1, 1);
 }
 
 module beam_top() { // make 2
@@ -382,6 +395,8 @@ module frame_front_bottom_left(slope_peg=true) { // make 1
                 }
             }
 
+            peg(y=1);
+
             // Screws for front panel
             translate([0.5, 0.5, 0.5]) rotate([90, 0, 0]) screw_catch();
             translate([0.5, 0.5, 2]) rotate([90, 0, 0]) screw_catch();
@@ -398,7 +413,6 @@ module frame_front_bottom_left(slope_peg=true) { // make 1
         }
 
         peg_hole(x=1);
-        peg_hole(y=1);
         translate([0, 0, 2.5]) peg_hole(x=1);
     }
 }
@@ -641,13 +655,12 @@ color([0.1, 0.1, 0.1]) {
     inch_translate([0.5 + (e * 2), 0, 0]) mirror([0, 1, 0]) rotate([0, 0, -90]) beam_front();
 
     // Bottom front side beams
-    inch_translate([0, 0.5 + e, 0]) beam_bottom();
-    inch_translate([6 + (e * 4), 0.5 + e, 0]) mirror([1, 0, 0]) beam_bottom();
-
+    inch_translate([0, 0.5 + e, 0]) beam_bottom_front_left();
+    inch_translate([5.5 + (e * 4), 0.5 + e, 0]) beam_bottom_front_right();
 
     // Back half beams
-    inch_translate([0, 6.25 + (e * 3), 0]) beam_bottom();
-    inch_translate([6 + (e * 4), 6.25 + (e * 3), 0]) mirror([1, 0, 0]) beam_bottom();
+    inch_translate([0, 6.25 + (e * 3), 0]) beam_bottom_back();
+    inch_translate([6 + (e * 4), 6.25 + (e * 3), 0]) mirror([1, 0, 0]) beam_bottom_back();
     inch_translate([0, 6.25 + (e * 3), 6]) mirror([0, 0, 1]) beam_top();
     inch_translate([6 + (e * 4), 6.25 + (e * 3), 6]) mirror([1, 0, 0]) mirror([0, 0, 1]) beam_top();
 
