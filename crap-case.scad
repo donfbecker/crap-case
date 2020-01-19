@@ -48,6 +48,13 @@ screw_catch = 0.14;
 // Diameter of alignment pegs.
 alignment_peg = 0.24;
 
+// I think the pegs fit better if there are corners at the top,
+// bottom, and sides.  You might have better luck with the flats
+// in those positions.  If you want to try it, set this to true.
+//
+// Put peg flats on top
+flat_top_pegs = false;
+
 // Set this to the thickness of the material you plan
 // to use for panels in inches.  I wouldn't use anything
 // over 0.25 inches.  If you are printing them, leave it
@@ -144,10 +151,10 @@ module smart_controller_template() {
     translate([8, 27, -1]) cube([78, 51, 8]);
 
     // Screw holes
-    translate([2.5, 84.5, -1]) cylinder(r=1.5, h=7);
-    translate([90.5, 84.5, -1]) cylinder(r=1.5, h=7);
-    translate([2.5, 19.5, -1]) cylinder(r=1.5, h=7);
-    translate([90.5, 19.5, -1]) cylinder(r=1.5, h=7);
+    translate([2.5, 84.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2);
+    translate([90.5, 84.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2);
+    translate([2.5, 19.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2);
+    translate([90.5, 19.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2);
 
     // Knob
     translate([84, 8.25, -1]) cylinder(r=3.25, h=17);
@@ -199,7 +206,8 @@ module screw_catch() {
 module peg(x=0, y=0, z=0, taper=true, faces=8) {
     major = (alignment_peg / 2);
     minor = taper ? ((alignment_peg - (1/8)) / 2) : major;
-    #translate([0.25 + ((3/16) * x), 0.25 + ((3/16) * y), 0.25 + ((3/16) * z)]) rotate([90 * y, 90 * x, 0]) rotate([0, 0, 22.5]) {
+    
+    #translate([0.25 + ((3/16) * x), 0.25 + ((3/16) * y), 0.25 + ((3/16) * z)]) rotate([90 * y, 90 * x, 0]) rotate([0, 0, flat_top_pegs ? 22.5 : 0]) {
         translate([0, 0, -(3/16)]) mirror([0, 0, 1]) cylinder(r1=major, r2=minor, h=(1/16), center=false, $fn=faces);
         cylinder(r=major, h=(3/8), center=true, $fn=faces);
         translate([0, 0, (3/16)]) cylinder(r1=major, r2=minor, h=(1/16), center=false, $fn=faces);
@@ -677,7 +685,7 @@ if(!hide_panels) color([0.5, 0.5, 0.5]) {
         inch_translate([panel_thickness - e, 0.5 + e, 0.5]) rotate([0, -90, 0]) panel_large_left();
         if(!open_side) inch_translate([6 - panel_thickness + (e * 5), 0.5 + e, 0.5]) rotate([0, 90, 0]) panel_large_right();
         inch_translate([0.5 + (e * 2), 4.5 + e, 6 - panel_thickness + e]) panel_large_top();
-        inch_translate([0.5 + (e * 2), 0.5 + e, 0.375 + e]) panel_large_bottom();
+        inch_translate([0.5 + (e * 2), 0.5 + e, 0.5 - panel_thickness + e]) panel_large_bottom();
     } else {
         inch_translate([0.5 + (e * 2), 4.5, 6 - panel_thickness + e]) panel_small();
         inch_translate([panel_thickness - e, 0.5, 0.5]) rotate([0, -90, 0]) panel_front_left();
@@ -694,7 +702,7 @@ if(!hide_panels) color([0.5, 0.5, 0.5]) {
    inch_translate([0.5 + (e * 2), panel_thickness - e, 0.5]) rotate([90, 0, 0]) panel_front();
    inch_translate([0.5 + (e * 2), 12 + (e * 6), 0.5]) rotate([90, 0, 0]) panel_back();
 
-   inch_translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) inch_translate([0.5 + (e * 2), 0.5, -0.125]) panel_screen();
+   inch_translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) inch_translate([0.5 + (e * 2), 0.5, -panel_thickness + e]) panel_screen();
 }
 
 color([0.4, 0.4, 0.4]) {
@@ -705,8 +713,8 @@ color([0.4, 0.4, 0.4]) {
     inch_translate([5.5 + (e * 3), 7.125 + (e * 3), 2.5]) mirror([1, 0, 0]) power_supply_bracket();
 }
 
-if(!explode) {
-    color([0.3, 0.3, 0.5]) translate([((inch(6) - 115) / 2) + inch(e * 2), inch(1) + (inch(1) - 25) * 5, inch(0.5)]) power_supply();
-    color([0.0, 0.7, 0.5]) inch_translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) inch_translate([0.5 + (e * 2), 0.5, -0.125]) translate([(inch(5) - 93) / 2, (inch(4) - 87) / 2, -10]) import("full_graphic_smart_controller.stl");
-    color([0.0, 0.5, 0.7]) inch_translate([(6 - 4.05) / 2 + (e * 2), 6, 3]) rotate([0, 0, -90]) import("rambo_v1.4.stl");
-}
+//if(!explode) {
+//    color([0.3, 0.3, 0.5]) translate([((inch(6) - 115) / 2) + inch(e * 2), inch(1) + (inch(1) - 25) * 5, inch(0.5)]) power_supply();
+//    color([0.0, 0.7, 0.5]) inch_translate([0, 0, 3]) rotate([atan(3/4), 0, 0]) inch_translate([0.5 + (e * 2), 0.5, -0.125]) translate([(inch(5) - 93) / 2, (inch(4) - 87) / 2, -10]) import("full_graphic_smart_controller.stl");
+//    color([0.0, 0.5, 0.7]) inch_translate([(6 - 4.05) / 2 + (e * 2), 6, 3]) rotate([0, 0, -90]) import("rambo_v1.4.stl");
+//}

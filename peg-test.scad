@@ -5,7 +5,7 @@ inches() {
         difference() {
             union() {
                 cube([0.5, 0.5, 0.5]);
-                peg(z=1);
+                peg(y=1);
             }
  
             peg_hole(y=-1);
