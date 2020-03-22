@@ -101,9 +101,15 @@ open_side = true;
 // Do not edit below this line
 // -----------------------------------------------------------
 
-$fn = $preview ? 8 : 360;
+$fs = 0.25;
+$fn = $preview ? 8 : 0;
 
 e = explode ? 0.5 : 0;
+
+// These are used to make sure $fn is calculated properly
+// when we are doing scaling.
+function fn(r) = $fn == 0 ? floor((r * 2 * PI) / $fs) : $fn;
+function inch_fn(r) = fn(r * inch_to_mm);
 
 function inch(size) =  size * inch_to_mm;
 function inch_v(x, y, z) = [x * inch_to_mm, y * inch_to_mm, z * inch_to_mm];
@@ -133,10 +139,10 @@ module rambo_v14_template() {
     // Rambo 1.4 is 4.1 by 4.05 inches.
     // screw holes are 0.15 inches from each edge.
     inches() {
-        translate([0.15, 0.15, 0]) cylinder(r=(1/16), h=0.5, center=true);
-        translate([0.15, 3.9, 0]) cylinder(r=(1/16), h=0.5, center=true);
-        translate([3.95, 0.15, 0]) cylinder(r=(1/16), h=0.5, center=true);
-        translate([3.95, 3.9, 0]) cylinder(r=(1/16), h=0.5, center=true);
+        translate([0.15, 0.15, 0]) cylinder(r=(1/16), h=0.5, $fn=inch_fn(1/16), center=true);
+        translate([0.15, 3.9, 0]) cylinder(r=(1/16), h=0.5, $fn=inch_fn(1/16), center=true);
+        translate([3.95, 0.15, 0]) cylinder(r=(1/16), h=0.5, $fn=inch_fn(1/16), center=true);
+        translate([3.95, 3.9, 0]) cylinder(r=(1/16), h=0.5, $fn=inch_fn(1/16), center=true);
     }
 }
 
@@ -148,25 +154,25 @@ module smart_controller() {
 }
 
 module smart_controller_template() {
-    translate([8, 27, -1]) cube([78, 51, 8]);
+    translate([7.5, 26.6, -1]) cube([79, 52, 8]);
 
     // Screw holes
-    translate([2.5, 84.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2);
-    translate([90.5, 84.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2);
-    translate([2.5, 19.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2);
-    translate([90.5, 19.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2);
-
-    // Knob
-    translate([84, 8.25, -1]) cylinder(r=3.25, h=17);
-
-    // Reset
-    translate([49.5, 8, -1]) cylinder(r=1.75, h=17);
-
-    // Speaker
-    translate([49.5, 8, -1]) cylinder(r=1.75, h=17);
+    translate([2.5, 84.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2, $fn=fn(1.5));
+    translate([90.5, 84.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2, $fn=fn(1.5));
+    translate([2.5, 19.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2, $fn=fn(1.5));
+    translate([90.5, 19.5, -1]) cylinder(r=1.5, h=inch(panel_thickness)+2, $fn=fn(1.5));
 
     // Contrast
-    translate([8.5, 11, -1]) cylinder(r=3, h=17);
+    translate([8.5, 11, -1]) cylinder(r=3, h=17, $fn=fn(3));
+
+    // Reset
+    translate([50.5, 8, -1]) cylinder(r=1.75, h=17, $fn=fn(1.75));
+
+    // Speaker
+    translate([65, 8, -1]) cylinder(r=1.75, h=17, $fn=fn(1.75));
+
+    // Knob
+    translate([83, 8.25, -1]) cylinder(r=3.75, h=17, $fn=fn(3.25));
 }
 
 module power_supply() {
@@ -174,24 +180,24 @@ module power_supply() {
         cube([115, 215, 50]);
         translate([2, 197, 5]) cube([111, 20, 50]);
 
-        #translate([-2, 32.5, 12.5]) rotate([0, 90, 0]) cylinder(r=2, h=7);
-        #translate([-2, 182.5, 12.5]) rotate([0, 90, 0]) cylinder(r=2, h=7);
+        #translate([-2, 32.5, 12.5]) rotate([0, 90, 0]) cylinder(r=2, h=7, $fn=fn(2));
+        #translate([-2, 182.5, 12.5]) rotate([0, 90, 0]) cylinder(r=2, h=7, $fn=fn(2));
 
-        #translate([-2, 32.5, 37.5]) rotate([0, 90, 0]) cylinder(r=2, h=7);
-        #translate([-2, 182.5, 37.5]) rotate([0, 90, 0]) cylinder(r=2, h=7);
+        #translate([-2, 32.5, 37.5]) rotate([0, 90, 0]) cylinder(r=2, h=7, $fn=fn(2));
+        #translate([-2, 182.5, 37.5]) rotate([0, 90, 0]) cylinder(r=2, h=7, $fn=fn(2));
 
-        #translate([117, 32.5, 12.5]) rotate([0, -90, 0]) cylinder(r=2, h=7);
-        #translate([117, 182.5, 12.5]) rotate([0, -90, 0]) cylinder(r=2, h=7);
+        #translate([117, 32.5, 12.5]) rotate([0, -90, 0]) cylinder(r=2, h=7, $fn=fn(2));
+        #translate([117, 182.5, 12.5]) rotate([0, -90, 0]) cylinder(r=2, h=7, $fn=fn(2));
 
-        #translate([117, 32.5, 37.5]) rotate([0, -90, 0]) cylinder(r=2, h=7);
-        #translate([117, 182.5, 37.5]) rotate([0, -90, 0]) cylinder(r=2, h=7);
+        #translate([117, 32.5, 37.5]) rotate([0, -90, 0]) cylinder(r=2, h=7, $fn=fn(2));
+        #translate([117, 182.5, 37.5]) rotate([0, -90, 0]) cylinder(r=2, h=7, $fn=fn(2));
     }
 }
 
 module screw_hole() {
     // don't scale this to inches, the modules
     // that call it will do that
-    translate([0.25, 0.25, -0.5]) cylinder(r=(screw_hole/2), h=1);
+    translate([0.25, 0.25, -0.5]) cylinder(r=(screw_hole/2), h=1, $fn=inch_fn(screw_hole / 2));
 }
 
 module screw_catch() {
@@ -199,7 +205,7 @@ module screw_catch() {
     // that call it will do that
     difference() {
         cube([0.5, 0.5, 0.5 - panel_thickness]);
-        translate([0.25, 0.25, -0.001]) cylinder(r=(screw_catch/2), h=0.502);
+        translate([0.25, 0.25, -0.001]) cylinder(r=(screw_catch/2), h=0.502, $fn=inch_fn(screw_hole / 2));
     }
 }
 
@@ -215,7 +221,7 @@ module peg(x=0, y=0, z=0, taper=true, faces=8) {
 }
 
 module peg_hole(x=0, y=0, z=0) {
-    peg(x, y, z, false, $fn);
+    peg(x, y, z, false, inch_fn(alignment_peg));
 }
 
 module beam(length, screws=true, bottom=false, p1=1, p2=1) {
@@ -305,11 +311,11 @@ module power_supply_bracket() { // make 4
         }
 
         // Holes to mount to power supply
-        translate([0, inch(0.75) - spacing, -inch(2) + 12.5]) rotate([0, -90, 0]) cylinder(r=2.5, h=inch(1.5), center=true);
-        translate([0, inch(0.75) + spacing, -inch(2) + 12.5]) rotate([0, -90, 0]) cylinder(r=2.5, h=inch(1.5), center=true);
+        translate([0, inch(0.75) - spacing, -inch(2) + 12.5]) rotate([0, -90, 0]) cylinder(r=2.5, h=inch(1.5), center=true, $fn=fn(2.5));
+        translate([0, inch(0.75) + spacing, -inch(2) + 12.5]) rotate([0, -90, 0]) cylinder(r=2.5, h=inch(1.5), center=true, $fn=fn(2.5));
 
-        translate([0, inch(0.75) - spacing, -inch(2) + 37.5]) rotate([0, -90, 0]) cylinder(r=2.5, h=inch(1.5), center=true);
-        translate([0, inch(0.75) + spacing, -inch(2) + 37.5]) rotate([0, -90, 0]) cylinder(r=2.5, h=inch(1.5), center=true);
+        translate([0, inch(0.75) - spacing, -inch(2) + 37.5]) rotate([0, -90, 0]) cylinder(r=2.5, h=inch(1.5), center=true, $fn=fn(2.5));
+        translate([0, inch(0.75) + spacing, -inch(2) + 37.5]) rotate([0, -90, 0]) cylinder(r=2.5, h=inch(1.5), center=true, $fn=fn(2.5));
 
     }
 }
