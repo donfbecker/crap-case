@@ -205,7 +205,7 @@ module screw_catch() {
     // that call it will do that
     difference() {
         cube([0.5, 0.5, 0.5 - panel_thickness]);
-        translate([0.25, 0.25, -0.001]) cylinder(r=(screw_catch/2), h=0.502, $fn=inch_fn(screw_hole / 2));
+        translate([0.25, 0.25, -0.001]) cylinder(r=(screw_catch/2), h=0.502, $fn=inch_fn(screw_catch / 2));
     }
 }
 
@@ -285,11 +285,11 @@ module board_beam() { // make 4
         beam(5.25, false, false);
 
         for(i = [0 : 9]) {
-            inches() translate([0, 0.125 + (0.5 * i), 0.25]) screw_hole();
+            #inches() translate([0.25, 0.375 + (0.5 * i), 0]) cylinder(r=(screw_catch/2), h=0.5, $fn=inch_fn(screw_catch / 2));
         }
 
         for(i = [0 : 8]) {
-            inches() translate([0.25, 0.375 + (0.5 * i), 0]) rotate([0, -90, 0]) screw_hole();
+            #inches() translate([0.5, 0.625 + (0.5 * i), 0.25]) rotate([0, -90, 0]) cylinder(r=(screw_catch/2), h=0.5, $fn=inch_fn(screw_catch / 2));
         }
     }
 }
@@ -712,10 +712,10 @@ if(!hide_panels) color([0.5, 0.5, 0.5]) {
 }
 
 color([0.4, 0.4, 0.4]) {
-    inch_translate([0.5 + e, 2, 2.5]) power_supply_bracket();
+    inch_translate([0.5 + e, 1.875, 2.5]) power_supply_bracket();
     inch_translate([0.5 + e, 7.125 + (e * 3), 2.5]) power_supply_bracket();
 
-    inch_translate([5.5 + (e * 3), 2, 2.5]) mirror([1, 0, 0]) power_supply_bracket();
+    inch_translate([5.5 + (e * 3), 1.875, 2.5]) mirror([1, 0, 0]) power_supply_bracket();
     inch_translate([5.5 + (e * 3), 7.125 + (e * 3), 2.5]) mirror([1, 0, 0]) power_supply_bracket();
 }
 
