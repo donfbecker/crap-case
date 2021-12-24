@@ -285,18 +285,18 @@ module board_beam() { // make 4
         beam(5.25, false, false);
 
         for(i = [0 : 9]) {
-            #inches() translate([0.25, 0.375 + (0.5 * i), 0]) cylinder(r=(screw_catch/2), h=0.5, $fn=inch_fn(screw_catch / 2));
+            #inches() translate([0.25, 0.25 + (0.5 * i), 0]) cylinder(r=(screw_catch/2), h=0.5, $fn=inch_fn(screw_catch / 2));
         }
 
-        for(i = [0 : 8]) {
-            #inches() translate([0.5, 0.625 + (0.5 * i), 0.25]) rotate([0, -90, 0]) cylinder(r=(screw_catch/2), h=0.5, $fn=inch_fn(screw_catch / 2));
+        for(i = [0 : 9]) {
+            #inches() translate([0.5, 0.5 + (0.5 * i), 0.25]) rotate([0, -90, 0]) cylinder(r=(screw_catch/2), h=0.5, $fn=inch_fn(screw_catch / 2));
         }
     }
 }
 
 module power_supply_bracket() { // make 4
     inset = (115 - inch(4)) / 2;
-    spacing = (150 - inch(5.125)) / 2;
+    spacing = (150 - inch(5)) / 2;
     difference() {
         union() {
             inches() cube([0.5, 1.5, 0.5]);
@@ -679,8 +679,8 @@ color([0.1, 0.1, 0.1]) {
     inch_translate([6 + (e * 4), 6.25 + (e * 3), 6]) mirror([1, 0, 0]) mirror([0, 0, 1]) beam_top();
 
     // Board shelf beams
-    inch_translate([1 + e, 0.5 + e, 2.5]) board_beam();
-    inch_translate([4.5 + (e * 3), 0.5 + e, 2.5]) board_beam();
+    inch_translate([1 + e, 5.75 + e, 2.5]) mirror([0, 1, 0]) board_beam();
+    inch_translate([4.5 + (e * 3), 5.75 + e, 2.5]) mirror([0, 1, 0]) board_beam();
 
     inch_translate([1 + e, 6.25 + (e * 3), 2.5]) board_beam();
     inch_translate([4.5 + (e * 3), 6.25 + (e * 3), 2.5]) board_beam();
@@ -712,11 +712,11 @@ if(!hide_panels) color([0.5, 0.5, 0.5]) {
 }
 
 color([0.4, 0.4, 0.4]) {
-    inch_translate([0.5 + e, 1.875, 2.5]) power_supply_bracket();
-    inch_translate([0.5 + e, 7.125 + (e * 3), 2.5]) power_supply_bracket();
+    inch_translate([0.5 + e, 2.5, 2.5]) power_supply_bracket();
+    inch_translate([0.5 + e, 7.5 + (e * 3), 2.5]) power_supply_bracket();
 
-    inch_translate([5.5 + (e * 3), 1.875, 2.5]) mirror([1, 0, 0]) power_supply_bracket();
-    inch_translate([5.5 + (e * 3), 7.125 + (e * 3), 2.5]) mirror([1, 0, 0]) power_supply_bracket();
+    inch_translate([5.5 + (e * 3), 2.5, 2.5]) mirror([1, 0, 0]) power_supply_bracket();
+    inch_translate([5.5 + (e * 3), 7.5 + (e * 3), 2.5]) mirror([1, 0, 0]) power_supply_bracket();
 }
 
 //if(!explode) {
